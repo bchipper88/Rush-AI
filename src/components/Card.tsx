@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
-import { Pressable, StyleSheet, View, ViewStyle } from 'react-native';
+import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { colors, radii, spacing } from '@/theme';
 
 interface CardProps {
   children: ReactNode;
   onPress?: () => void;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export function Card({ children, onPress, style }: CardProps) {
@@ -26,14 +26,14 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.card,
     borderRadius: radii.lg,
-    padding: spacing.lg,
+    padding: spacing.xl - 4,
     borderWidth: 1,
     borderColor: colors.border,
-    shadowColor: colors.primaryDark,
-    shadowOpacity: 0.05,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 1,
+    shadowColor: colors.primary,
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
   },
-  pressed: { opacity: 0.92 },
+  pressed: { opacity: 0.95, transform: [{ scale: 0.98 }] },
 });

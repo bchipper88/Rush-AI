@@ -3,31 +3,33 @@ export const colors = {
   primary: '#EC4899',
   primaryDark: '#BE185D',
   primarySoft: '#F9A8D4',
-  blush: '#FDF2F8',
+  primaryFaint: '#FCE7F0',
+  blush: '#FFF0F3',
   cream: '#FFF7FA',
   white: '#FFFFFF',
 
-  // Text
-  ink: '#3B3340',
-  muted: '#8E8393',
-  faint: '#C4BCC9',
+  // Text (warm charcoal ramp, Flo-style)
+  ink: '#1F1A2E',
+  muted: '#6E6A82',
+  faint: '#A09CB0',
 
-  // Semantic
-  success: '#10B981',
-  warning: '#F59E0B',
-  danger: '#EF4444',
-  info: '#8B5CF6',
+  // Semantic (gentle variants)
+  success: '#3FA983',
+  warning: '#E8A44E',
+  danger: '#E25563',
+  info: '#A893D6',
 
   // Surfaces
   card: '#FFFFFF',
-  border: '#F5D8E7',
-  overlay: 'rgba(59, 51, 64, 0.45)',
+  sunken: '#FBE9ED',
+  border: '#F3DDE3',
+  overlay: 'rgba(31, 26, 46, 0.45)',
 
   // Audit verdicts
-  verdictKeep: '#10B981',
-  verdictEdit: '#F59E0B',
-  verdictArchive: '#8B5CF6',
-  verdictDelete: '#EF4444',
+  verdictKeep: '#3FA983',
+  verdictEdit: '#E8A44E',
+  verdictArchive: '#A893D6',
+  verdictDelete: '#E25563',
 } as const;
 
 export type AppColor = keyof typeof colors;

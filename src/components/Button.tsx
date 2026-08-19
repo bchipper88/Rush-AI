@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics';
 import { ActivityIndicator, Pressable, StyleSheet, ViewStyle } from 'react-native';
 
 import { AppText } from '@/components/AppText';
@@ -24,10 +25,16 @@ export function Button({
 }: ButtonProps) {
   const isPrimary = variant === 'primary';
   const textColor = isPrimary ? colors.white : colors.primaryDark;
+  const handlePress = () => {
+    if (isPrimary) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+    }
+    onPress();
+  };
   return (
     <Pressable
       accessibilityRole="button"
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled || loading}
       style={({ pressed }) => [
         styles.base,
@@ -66,5 +73,5 @@ const styles = StyleSheet.create({
   },
   ghost: { backgroundColor: 'transparent' },
   disabled: { opacity: 0.4 },
-  pressed: { opacity: 0.85, transform: [{ scale: 0.99 }] },
+  pressed: { opacity: 0.9, transform: [{ scale: 0.97 }] },
 });

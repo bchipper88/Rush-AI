@@ -20,6 +20,7 @@ export const defaultSchool: School = {
 export const schools: School[] = [
   {
     id: 'alabama',
+    domain: 'ua.edu',
     name: 'University of Alabama',
     shortName: 'Alabama',
     region: 'south',
@@ -34,6 +35,7 @@ export const schools: School[] = [
   },
   {
     id: 'ole-miss',
+    domain: 'olemiss.edu',
     name: 'University of Mississippi',
     shortName: 'Ole Miss',
     region: 'south',
@@ -47,6 +49,7 @@ export const schools: School[] = [
   },
   {
     id: 'georgia',
+    domain: 'uga.edu',
     name: 'University of Georgia',
     shortName: 'UGA',
     region: 'south',
@@ -60,6 +63,7 @@ export const schools: School[] = [
   },
   {
     id: 'auburn',
+    domain: 'auburn.edu',
     name: 'Auburn University',
     shortName: 'Auburn',
     region: 'south',
@@ -73,6 +77,7 @@ export const schools: School[] = [
   },
   {
     id: 'lsu',
+    domain: 'lsu.edu',
     name: 'Louisiana State University',
     shortName: 'LSU',
     region: 'south',
@@ -86,6 +91,7 @@ export const schools: School[] = [
   },
   {
     id: 'tennessee',
+    domain: 'utk.edu',
     name: 'University of Tennessee',
     shortName: 'Tennessee',
     region: 'south',
@@ -99,6 +105,7 @@ export const schools: School[] = [
   },
   {
     id: 'arkansas',
+    domain: 'uark.edu',
     name: 'University of Arkansas',
     shortName: 'Arkansas',
     region: 'south',
@@ -112,6 +119,7 @@ export const schools: School[] = [
   },
   {
     id: 'miss-state',
+    domain: 'msstate.edu',
     name: 'Mississippi State University',
     shortName: 'Miss State',
     region: 'south',
@@ -125,6 +133,7 @@ export const schools: School[] = [
   },
   {
     id: 'florida',
+    domain: 'ufl.edu',
     name: 'University of Florida',
     shortName: 'UF',
     region: 'southeast',
@@ -138,6 +147,7 @@ export const schools: School[] = [
   },
   {
     id: 'fsu',
+    domain: 'fsu.edu',
     name: 'Florida State University',
     shortName: 'FSU',
     region: 'southeast',
@@ -151,6 +161,7 @@ export const schools: School[] = [
   },
   {
     id: 'south-carolina',
+    domain: 'sc.edu',
     name: 'University of South Carolina',
     shortName: 'South Carolina',
     region: 'southeast',
@@ -164,6 +175,7 @@ export const schools: School[] = [
   },
   {
     id: 'clemson',
+    domain: 'clemson.edu',
     name: 'Clemson University',
     shortName: 'Clemson',
     region: 'southeast',
@@ -177,6 +189,7 @@ export const schools: School[] = [
   },
   {
     id: 'texas',
+    domain: 'utexas.edu',
     name: 'University of Texas at Austin',
     shortName: 'UT Austin',
     region: 'texas',
@@ -190,6 +203,7 @@ export const schools: School[] = [
   },
   {
     id: 'texas-am',
+    domain: 'tamu.edu',
     name: 'Texas A&M University',
     shortName: 'Texas A&M',
     region: 'texas',
@@ -203,6 +217,7 @@ export const schools: School[] = [
   },
   {
     id: 'tcu',
+    domain: 'tcu.edu',
     name: 'Texas Christian University',
     shortName: 'TCU',
     region: 'texas',
@@ -216,6 +231,7 @@ export const schools: School[] = [
   },
   {
     id: 'smu',
+    domain: 'smu.edu',
     name: 'Southern Methodist University',
     shortName: 'SMU',
     region: 'texas',
@@ -230,6 +246,7 @@ export const schools: School[] = [
   },
   {
     id: 'oklahoma',
+    domain: 'ou.edu',
     name: 'University of Oklahoma',
     shortName: 'OU',
     region: 'texas',
@@ -243,6 +260,7 @@ export const schools: School[] = [
   },
   {
     id: 'ohio-state',
+    domain: 'osu.edu',
     name: 'Ohio State University',
     shortName: 'Ohio State',
     region: 'midwest',
@@ -256,6 +274,7 @@ export const schools: School[] = [
   },
   {
     id: 'indiana',
+    domain: 'indiana.edu',
     name: 'Indiana University',
     shortName: 'Indiana',
     region: 'midwest',
@@ -270,6 +289,7 @@ export const schools: School[] = [
   },
   {
     id: 'purdue',
+    domain: 'purdue.edu',
     name: 'Purdue University',
     shortName: 'Purdue',
     region: 'midwest',
@@ -283,6 +303,7 @@ export const schools: School[] = [
   },
   {
     id: 'michigan',
+    domain: 'umich.edu',
     name: 'University of Michigan',
     shortName: 'Michigan',
     region: 'midwest',
@@ -296,6 +317,7 @@ export const schools: School[] = [
   },
   {
     id: 'penn-state',
+    domain: 'psu.edu',
     name: 'Penn State University',
     shortName: 'Penn State',
     region: 'northeast',
@@ -309,6 +331,7 @@ export const schools: School[] = [
   },
   {
     id: 'cornell',
+    domain: 'cornell.edu',
     name: 'Cornell University',
     shortName: 'Cornell',
     region: 'northeast',
@@ -323,6 +346,7 @@ export const schools: School[] = [
   },
   {
     id: 'northwestern',
+    domain: 'northwestern.edu',
     name: 'Northwestern University',
     shortName: 'Northwestern',
     region: 'midwest',
@@ -336,6 +360,7 @@ export const schools: School[] = [
   },
   {
     id: 'duke',
+    domain: 'duke.edu',
     name: 'Duke University',
     shortName: 'Duke',
     region: 'southeast',
@@ -349,6 +374,7 @@ export const schools: School[] = [
   },
   {
     id: 'asu',
+    domain: 'asu.edu',
     name: 'Arizona State University',
     shortName: 'ASU',
     region: 'west',
@@ -362,6 +388,7 @@ export const schools: School[] = [
   },
   {
     id: 'ucla',
+    domain: 'ucla.edu',
     name: 'University of California, Los Angeles',
     shortName: 'UCLA',
     region: 'west',

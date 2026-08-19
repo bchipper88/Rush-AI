@@ -17,11 +17,16 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.muted,
-        tabBarLabelStyle: { fontFamily: fonts.bodySemiBold, fontSize: 11 },
+        tabBarInactiveTintColor: colors.faint,
+        tabBarLabelStyle: {
+          fontFamily: fonts.bodySemiBold,
+          fontSize: 11,
+          letterSpacing: 0.2,
+        },
         tabBarStyle: {
           backgroundColor: colors.white,
           borderTopColor: colors.border,
+          borderTopWidth: 0.5,
         },
       }}>
       <Tabs.Screen

@@ -30,11 +30,19 @@ export function AppText({
   ...rest
 }: AppTextProps) {
   const isDisplay = displayVariants.includes(variant);
+  const tightSpacing: Partial<Record<Variant, number>> = {
+    hero: -0.4,
+    title: -0.3,
+    heading: -0.2,
+    subheading: -0.1,
+    caption: 0.4,
+  };
   const base: TextStyle = {
     fontFamily: isDisplay ? fonts.display : weightFont[weight],
     fontSize: fontSizes[variant],
     color,
     lineHeight: fontSizes[variant] * (isDisplay ? 1.15 : 1.45),
+    letterSpacing: tightSpacing[variant],
     textAlign: center ? 'center' : undefined,
   };
   return <Text style={[base, style]} {...rest} />;

@@ -17,6 +17,8 @@ export interface School {
   id: string;
   name: string;
   shortName: string;
+  /** .edu domain, used to render the school logo */
+  domain?: string;
   region: Region;
   style: RecruitmentStyle;
   recs: RecsPolicy;
@@ -42,6 +44,7 @@ export interface UserProfile {
   name: string;
   schoolId: string | null;
   customSchoolName?: string;
+  customSchoolDomain?: string;
   priorities: Priority[];
   /** calendar year of the recruitment the user is preparing for, e.g. 2027 */
   rushYear: number;

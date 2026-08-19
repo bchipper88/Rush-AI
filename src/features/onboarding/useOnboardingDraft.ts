@@ -6,12 +6,17 @@ interface OnboardingDraft {
   name: string;
   schoolId: string | null;
   customSchoolName: string;
+  customSchoolDomain: string;
   priorities: Priority[];
   rushYear: number;
   gpa: string;
   activities: string;
   setName: (name: string) => void;
-  setSchool: (schoolId: string | null, customSchoolName?: string) => void;
+  setSchool: (
+    schoolId: string | null,
+    customSchoolName?: string,
+    customSchoolDomain?: string,
+  ) => void;
   togglePriority: (p: Priority) => void;
   setRushYear: (year: number) => void;
   setAcademics: (gpa: string, activities: string) => void;
@@ -26,12 +31,14 @@ export const useOnboardingDraft = create<OnboardingDraft>((set) => ({
   name: '',
   schoolId: null,
   customSchoolName: '',
+  customSchoolDomain: '',
   priorities: [],
   rushYear: defaultYear,
   gpa: '',
   activities: '',
   setName: (name) => set({ name }),
-  setSchool: (schoolId, customSchoolName = '') => set({ schoolId, customSchoolName }),
+  setSchool: (schoolId, customSchoolName = '', customSchoolDomain = '') =>
+    set({ schoolId, customSchoolName, customSchoolDomain }),
   togglePriority: (p) =>
     set((s) => ({
       priorities: s.priorities.includes(p)
@@ -45,6 +52,7 @@ export const useOnboardingDraft = create<OnboardingDraft>((set) => ({
       name: '',
       schoolId: null,
       customSchoolName: '',
+      customSchoolDomain: '',
       priorities: [],
       rushYear: defaultYear,
       gpa: '',

@@ -19,6 +19,7 @@ export default function DoneStep() {
         name: draft.name.trim(),
         schoolId: draft.schoolId,
         customSchoolName: draft.customSchoolName.trim() || undefined,
+        customSchoolDomain: draft.customSchoolDomain.trim() || undefined,
         priorities: draft.priorities,
         rushYear: draft.rushYear,
         gpa: draft.gpa.trim() || undefined,
