@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { AgeGate } from '@/components/AgeGate';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
@@ -59,7 +60,7 @@ function ScoreBar({ label, value }: { label: string; value: number }) {
   );
 }
 
-export default function PracticeScreen() {
+function PracticeScreen() {
   const profile = useProfileStore((s) => s.profile);
   const [round, setRound] = useState<PracticeRound | null>(null);
   const [messages, setMessages] = useState<PracticeMessage[]>([]);
@@ -392,3 +393,11 @@ const styles = StyleSheet.create({
   flagCard: { borderColor: colors.warning, borderWidth: 2 },
   cta: { marginTop: spacing.xxl },
 });
+
+export default function PracticeScreenGated() {
+  return (
+    <AgeGate>
+      <PracticeScreen />
+    </AgeGate>
+  );
+}

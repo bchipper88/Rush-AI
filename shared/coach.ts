@@ -23,6 +23,7 @@ export const CoachContextSchema = z.object({
   priorities: z.array(z.string()),
   gpa: z.string().optional(),
   checklist: z.array(CoachChecklistItemSchema).max(60),
+  houses: z.string().max(1200).optional(),
 });
 
 export const CoachChatRequestSchema = z.object({

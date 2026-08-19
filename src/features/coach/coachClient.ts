@@ -8,6 +8,7 @@ import { buildChecklist, resolveRushAnchor, resolveSchool, schoolSeason } from '
 import { daysUntil } from '@/lib/dates';
 import type { UserProfile } from '@/types';
 
+import { houseSummaryForCoach, TrackedHouse } from '@/features/houses/houseUtils';
 import { mockCoachReply } from './mockCoach';
 
 export class CoachUnavailableError extends Error {
@@ -32,6 +33,7 @@ const REQUEST_TIMEOUT_MS = 60_000;
 export function buildCoachContext(
   profile: UserProfile,
   done: Record<string, boolean>,
+  houses: TrackedHouse[] = [],
 ): CoachContext {
   const school = resolveSchool(profile);
   const anchor = resolveRushAnchor(profile, school);
@@ -51,6 +53,7 @@ export function buildCoachContext(
     daysUntilRush: daysUntil(anchor),
     priorities: profile.priorities,
     gpa: profile.gpa,
+    houses: houses.length > 0 ? houseSummaryForCoach(houses) : undefined,
     checklist: items.map((i) => ({
       title: i.title,
       phase: i.phase,

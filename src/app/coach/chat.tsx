@@ -13,6 +13,7 @@ import {
 import Animated, { FadeInDown, FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { AgeGate } from '@/components/AgeGate';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { Chip } from '@/components/Chip';
@@ -27,6 +28,7 @@ import { track } from '@/lib/analytics';
 import { makeId } from '@/lib/id';
 import { ChatBubble, useCoachStore } from '@/state/coachStore';
 import { useChecklistStore } from '@/state/checklistStore';
+import { useHouseStore } from '@/state/houseStore';
 import { useProfileStore } from '@/state/profileStore';
 import { colors, fonts, fontSizes, radii, spacing } from '@/theme';
 import type { CoachChatRequest } from '../../../shared/coach';
@@ -47,10 +49,11 @@ function TypingDots() {
   );
 }
 
-export default function CoachChatScreen() {
+function CoachChatScreen() {
   const insets = useSafeAreaInsets();
   const profile = useProfileStore((s) => s.profile);
   const done = useChecklistStore((s) => s.done);
+  const houses = useHouseStore((s) => s.houses);
   const messages = useCoachStore((s) => s.messages);
   const addMessage = useCoachStore((s) => s.addMessage);
   const clearChat = useCoachStore((s) => s.clearChat);
@@ -79,7 +82,7 @@ export default function CoachChatScreen() {
         .map((m) => ({ role: m.role, text: m.text }));
       const request: CoachChatRequest = {
         messages: history,
-        context: buildCoachContext(profile, done),
+        context: buildCoachContext(profile, done, houses),
       };
 
       const deliver = (reply: string, suggestions: string[], source: 'claude' | 'mock') => {
@@ -125,7 +128,7 @@ export default function CoachChatScreen() {
       }
       await attempt();
     },
-    [messages, waiting, profile, done, addMessage],
+    [messages, waiting, profile, done, houses, addMessage],
   );
 
   if (!profile) return null;
@@ -292,3 +295,11 @@ const styles = StyleSheet.create({
   },
   sendDisabled: { opacity: 0.4 },
 });
+
+export default function CoachChatScreenGated() {
+  return (
+    <AgeGate>
+      <CoachChatScreen />
+    </AgeGate>
+  );
+}

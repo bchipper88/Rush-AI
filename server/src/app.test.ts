@@ -169,6 +169,72 @@ describe('server app', () => {
     });
   });
 
+
+  describe('POST /api/practice', () => {
+    const practiceRequest = {
+      round: 'open_house',
+      messages: [{ role: 'user', text: 'Hi, I am Emma!' }],
+      finish: false,
+    };
+
+    it('returns 400 on an invalid body', async () => {
+      const res = await app.request('/api/practice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ round: 'bid_day', messages: [], finish: false }),
+      });
+      expect(res.status).toBe(400);
+    });
+
+    it('maps an in-character reply through', async () => {
+      mockParse.mockResolvedValue({
+        stop_reason: 'end_turn',
+        parsed_output: { reply: 'Hi! I am Sadie — where are you from?', memberName: 'Sadie' },
+      });
+      const res = await app.request('/api/practice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(practiceRequest),
+      });
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.memberName).toBe('Sadie');
+    });
+
+    it('maps structured feedback through when finishing', async () => {
+      mockParse.mockResolvedValue({
+        stop_reason: 'end_turn',
+        parsed_output: {
+          feedback: {
+            overall: 78,
+            scores: { warmth: 8, curiosity: 7, story: 8, poise: 8 },
+            wins: ['Asked her a question back'],
+            fixes: ['Add one specific detail'],
+            fiveBsFlags: [],
+          },
+        },
+      });
+      const res = await app.request('/api/practice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...practiceRequest, finish: true }),
+      });
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.feedback.overall).toBe(78);
+    });
+
+    it('returns 502 on upstream failure', async () => {
+      mockParse.mockRejectedValue(new Error('boom'));
+      const res = await app.request('/api/practice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(practiceRequest),
+      });
+      expect(res.status).toBe(502);
+    });
+  });
+
   describe('POST /api/events', () => {
     const validBatch = {
       events: [

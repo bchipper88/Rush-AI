@@ -29,8 +29,29 @@ Claude.
   tasks and due dates. Guardrailed (no bid guarantees, no tier gossip). In demo
   mode a rule-based coach answers from your real checklist.
 
+- **House Tracker** — track the chapters on your campus, log every round
+  (stars, vibe tags, notes, invited-back status), and build your **Pref
+  ranking** from your own data. The ranking weights later rounds more
+  heavily and enforces the MRABA "maximize your options" rule, warning you
+  before you leave a house off your list.
+- **Practice Mode** — the AI role-plays a chapter member for a round you
+  pick, then grades your side: warmth, curiosity, storytelling, poise, plus
+  Five B's flags and specific fixes. Works offline with a scripted partner
+  and heuristic scoring.
+- **Streaks & Daily Focus** — a daily card with one task and one micro-tip
+  (deterministic per day), a streak that forgives one missed day, and
+  optional local reminders (daily nudge + 30/7/1-day countdown alerts).
+- **Rush Week Mode** — within a week of recruitment, Home becomes a
+  day-by-day agenda: today's round, what to wear, what to bring, and the
+  one thing to remember.
 - **Bid Day check-in** — after recruitment ends, the app asks how it went
   (bid / no bid / withdrew) so outcomes can inform future guidance.
+
+**Age & the AI coach.** Onboarding collects a birth date (stored on-device
+only; analytics sees a coarse bracket). `src/config/policy.ts` holds the
+policy: `AGE_ENFORCEMENT` is `'soft'` today (age is recorded, nothing is
+blocked). Flip it to `'hard'` and the conversational-AI surfaces — coach
+chat and practice mode — are gated to 18+ automatically via `AgeGate`.
 
 Profile data is stored locally on-device; no accounts. With user consent
 (on by default, toggle in Profile → Data & privacy), anonymous usage events
@@ -89,9 +110,11 @@ npm test
 npm run server      # run the proxy from the repo root
 ```
 
-Tests cover the checklist personalization engine, the audit client's mock/real
-switching and error handling, seed-content schema validation, and the server's
-endpoints (with the Anthropic SDK mocked).
+127 tests cover the checklist personalization engine, house ranking and the
+maximize-options rule, streak math, daily-focus determinism, practice scoring
+(including Five B's detection), age brackets and gating, the audit/coach
+clients' mock-vs-real switching and error handling, seed-content schema
+validation, and every server endpoint (with the Anthropic SDK mocked).
 
 ## Architecture
 
@@ -99,9 +122,10 @@ endpoints (with the Anthropic SDK mocked).
 src/app/            Expo Router routes (onboarding flow, tabs, audit flow)
 src/components/     Pink/white design system (DM Serif Display + Inter)
 src/content/        Seed data: schools, articles, glossary, checklist templates
-src/features/       Pure logic: checklist engine, audit client, filters
+src/features/       Pure logic: checklist engine, house ranking, streaks,
+                    daily focus, rush week, audit/coach/practice clients
 src/state/          zustand + AsyncStorage stores (profile, checklist, audits)
 shared/             Zod contracts shared by app and server (audit, coach chat)
-server/             Hono proxy: POST /api/audit, POST /api/coach → Claude
-                    (vision + structured outputs)
+server/             Hono proxy → Claude (vision + structured outputs):
+                    POST /api/audit, /api/coach, /api/practice, /api/events
 ```

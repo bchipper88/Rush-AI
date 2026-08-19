@@ -42,6 +42,7 @@ export function buildCoachMessages(
       undone.map((i) => `${i.title} (${i.dueLabel})`).join('; ') || 'none — all done!'
     }`,
     `Completed: ${context.checklist.filter((i) => i.done).length}/${context.checklist.length}`,
+    context.houses ? `Houses: ${context.houses}` : '',
     `--- end context ---`,
   ]
     .filter(Boolean)
