@@ -42,7 +42,12 @@ const SCRIPTS: Record<PracticeRound, string[]> = {
 const FIVE_BS: { flag: string; pattern: RegExp }[] = [
   { flag: 'Boys', pattern: /\b(boyfriend|hookup|frat guy|guys? i|dating|situationship)\b/i },
   { flag: 'Booze', pattern: /\b(drunk|drink|drinking|beer|vodka|wasted|party|shots?|fake id)\b/i },
-  { flag: 'Bible', pattern: /\b(church|bible|jesus|god|religio|pray)\b/i },
+  {
+    flag: 'Beliefs',
+    // faith of every kind — the old Christian-only list missed most PNMs
+    pattern:
+      /\b(church|bible|jesus|god|religio|pray|prayer|faith|worship|synagogue|temple|mosque|torah|quran|koran|shabbat|jewish|muslim|hindu|christian|catholic|baptist|methodist|youth group|missions? trip)\b/i,
+  },
   { flag: 'Bucks', pattern: /\b(money|rich|expensive|dues cost|afford|designer|my dad's)\b/i },
   { flag: 'Ballots', pattern: /\b(politic|vote|voting|election|republican|democrat|liberal|conservative)\b/i },
 ];

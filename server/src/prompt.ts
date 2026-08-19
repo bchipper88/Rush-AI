@@ -9,7 +9,7 @@ Context: sorority chapters review PNM (potential new member) social profiles dur
 Evaluate each item for:
 - alcohol_party: alcohol, vapes, drug references, party settings (even implied — red cups, club scenes)
 - revealing: outfits that would raise eyebrows with an alumnae advisory board
-- controversial: political content, hot-button topics, activist messaging (the "Five B's": boys, booze, bible, bucks, ballots)
+- controversial: political content, hot-button topics, activist messaging (the "Five B's": boys, booze, beliefs/religion, bucks, ballots)
 - profanity: swearing or crude language in captions/bios
 - five_bs: captions/bios touching boys, booze, religion, money-flexing, or politics
 - negative_tone: mean-spirited, sarcastic-to-a-fault, drama-adjacent, or vague-posting energy

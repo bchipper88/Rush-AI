@@ -71,7 +71,7 @@ describe('gradePractice', () => {
     expect(
       gradePractice(req([{ role: 'user', text: 'I go to church every Sunday' }], true))
         .fiveBsFlags,
-    ).toContain('Bible');
+    ).toContain('Beliefs');
     expect(
       gradePractice(req([{ role: 'user', text: 'my dad said money is no issue' }], true))
         .fiveBsFlags,
@@ -79,6 +79,20 @@ describe('gradePractice', () => {
     expect(
       gradePractice(req([{ role: 'user', text: 'the election was wild' }], true)).fiveBsFlags,
     ).toContain('Ballots');
+  });
+
+  it('catches faith of any tradition, not just Christian phrasing', () => {
+    for (const line of [
+      'I go to synagogue every Friday',
+      'my mosque back home is amazing',
+      'we read Torah together',
+      'my youth group did a missions trip',
+      'faith is a big part of my life',
+    ]) {
+      expect(gradePractice(req([{ role: 'user', text: line }], true)).fiveBsFlags).toContain(
+        'Beliefs',
+      );
+    }
   });
 
   it('flags a Five B in the fixes list and penalizes poise', () => {

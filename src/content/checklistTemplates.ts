@@ -183,7 +183,7 @@ export const checklistTemplates: ChecklistTemplateItem[] = [
     id: 'review-five-bs',
     title: 'Review the Five B\'s',
     detail:
-      'Boys, Booze, Bible, Bucks, Ballots — the topics to steer around all week, for you and for the members talking to you.',
+      'Boys, Booze, Beliefs, Bucks, Ballots — the topics to steer around all week, for you and for the members talking to you.',
     phase: 'week_of',
     monthsBeforeRush: 0,
     articleSlug: 'five-bs',

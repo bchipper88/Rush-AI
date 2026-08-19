@@ -89,7 +89,7 @@ export const articles: ContentArticle[] = [
   {
     slug: 'five-bs',
     title: "The Five B's: Topics to Avoid",
-    teaser: 'Boys, Booze, Bible, Bucks, Ballots — why these five topics are off-limits all week.',
+    teaser: 'Boys, Booze, Beliefs, Bucks, Ballots — why these five topics are off-limits all week.',
     category: 'strategy',
     readingMinutes: 3,
     blocks: [
@@ -102,7 +102,7 @@ export const articles: ContentArticle[] = [
         items: [
           'Boys — boyfriends, situationships, fraternity men',
           'Booze — drinking, partying, fake IDs (also: never anything to post about)',
-          'Bible — religion, yours or theirs',
+          'Beliefs — religion and faith, yours or theirs',
           'Bucks — money: dues gossip, designer brags, what anything costs',
           'Ballots — politics, elections, hot-button issues',
         ],
@@ -111,6 +111,14 @@ export const articles: ContentArticle[] = [
         type: 'callout',
         tone: 'warning',
         text: 'If a member brings one up, redirect gently: "Honestly I\'m so focused on this week — tell me about your favorite sisterhood event!" You will never be penalized for gracefully changing the subject.',
+      },
+      {
+        type: 'paragraph',
+        text: 'You will sometimes hear the third one called "Bible." "Beliefs" is the better word: this is a national convention, not a Southern one, and it covers faith of every kind. Several NPC sororities were founded by Jewish women, and some campuses have religious heritage of their own (SMU is Methodist-affiliated) — which is exactly why faith stays personal in a five-minute conversation.',
+      },
+      {
+        type: 'paragraph',
+        text: 'There is also a fairness reason. Recruitment is a selection process, so questions about religion edge toward screening people on it. If a member raises her chapter\'s values or her own faith, it is fine to engage warmly — just do not lead with it.',
       },
       {
         type: 'paragraph',

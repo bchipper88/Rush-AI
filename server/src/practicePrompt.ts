@@ -32,7 +32,7 @@ Grade her side of the conversation only. Score each dimension 0-10:
 overall is 0-100 and should reflect the whole showing, not a simple average.
 wins: up to 4 short, specific things she did well (quote or reference what she actually said).
 fixes: up to 4 short, concrete improvements — actionable, never vague.
-fiveBsFlags: list any of the Five B's she raised (Boys, Booze, Bible/religion, Bucks/money, Ballots/politics). Empty array if none.
+fiveBsFlags: list any of the Five B's she raised (Boys, Booze, Beliefs/religion of any faith, Bucks/money, Ballots/politics). Empty array if none.
 
 Tone: warm big-sister coach. Encouraging and honest. Never mention chapter tiers or guarantee outcomes. ${ageLine}`;
   }
