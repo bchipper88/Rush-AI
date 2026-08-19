@@ -168,4 +168,48 @@ describe('server app', () => {
       expect(res.status).toBe(502);
     });
   });
+
+  describe('POST /api/events', () => {
+    const validBatch = {
+      events: [
+        {
+          installId: 'install_abc123def',
+          name: 'audit_completed',
+          ts: '2026-08-19T00:00:00.000Z',
+          props: { score: 82 },
+        },
+      ],
+    };
+
+    beforeEach(() => {
+      process.env.EVENTS_FILE = `${__dirname}/../.test-tmp/events-${Date.now()}.ndjson`;
+    });
+
+    it('returns 400 on an invalid batch', async () => {
+      const res = await app.request('/api/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ events: [] }),
+      });
+      expect(res.status).toBe(400);
+    });
+
+    it('stores a valid batch as NDJSON', async () => {
+      const res = await app.request('/api/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(validBatch),
+      });
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.stored).toBe(1);
+
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const fs = require('node:fs');
+      const written = fs.readFileSync(process.env.EVENTS_FILE, 'utf8').trim();
+      const record = JSON.parse(written);
+      expect(record.name).toBe('audit_completed');
+      expect(record.receivedAt).toBeTruthy();
+    });
+  });
 });

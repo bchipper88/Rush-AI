@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, Switch, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
@@ -14,6 +14,8 @@ import {
   schoolSeason,
 } from '@/features/checklist/buildChecklist';
 import { formatFullDate } from '@/lib/dates';
+import { OutcomeCheckIn } from '@/components/OutcomeCheckIn';
+import { useAnalyticsStore } from '@/lib/analytics';
 import { useAuditStore } from '@/state/auditStore';
 import { useChecklistStore } from '@/state/checklistStore';
 import { useProfileStore } from '@/state/profileStore';
@@ -34,6 +36,8 @@ export default function ProfileScreen() {
   const resetProfile = useProfileStore((s) => s.resetProfile);
   const resetChecklist = useChecklistStore((s) => s.resetChecklist);
   const clearAudits = useAuditStore((s) => s.clearHistory);
+  const analyticsEnabled = useAnalyticsStore((s) => s.enabled);
+  const setAnalyticsEnabled = useAnalyticsStore((s) => s.setEnabled);
   const [aiConnected, setAiConnected] = useState<boolean | null>(
     isMockMode() ? false : null,
   );
@@ -126,6 +130,9 @@ export default function ProfileScreen() {
         ) : null}
       </View>
 
+      <SectionHeader title="Your rush outcome" />
+      <OutcomeCheckIn />
+
       <SectionHeader title="AI status" />
       <Card>
         <AppText weight="semibold">
@@ -142,6 +149,24 @@ export default function ProfileScreen() {
         </AppText>
       </Card>
 
+      <SectionHeader title="Data & privacy" />
+      <Card>
+        <View style={styles.toggleRow}>
+          <View style={styles.toggleText}>
+            <AppText weight="semibold">Share anonymous usage data</AppText>
+            <AppText variant="small" color={colors.muted}>
+              Helps us improve Rush AI. Never includes your name, photos, or messages —
+              just anonymous events like &ldquo;audit completed.&rdquo;
+            </AppText>
+          </View>
+          <Switch
+            value={analyticsEnabled}
+            onValueChange={setAnalyticsEnabled}
+            trackColor={{ true: colors.primary, false: colors.border }}
+          />
+        </View>
+      </Card>
+
       <SectionHeader title="Manage" />
       <Button label="Redo onboarding" variant="secondary" onPress={() => router.push('/onboarding/name')} />
       <Button label="Reset everything" variant="ghost" onPress={handleReset} style={styles.reset} />
@@ -152,4 +177,6 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   cards: { gap: spacing.sm },
   reset: { marginTop: spacing.sm },
+  toggleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  toggleText: { flex: 1, gap: 2 },
 });

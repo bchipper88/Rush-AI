@@ -7,6 +7,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ActionTile } from '@/components/ActionTile';
 import { AppText } from '@/components/AppText';
 import { Card } from '@/components/Card';
+import { OutcomeCheckIn } from '@/components/OutcomeCheckIn';
 import { Screen } from '@/components/Screen';
 import { SectionHeader } from '@/components/SectionHeader';
 import {
@@ -79,6 +80,12 @@ export default function HomeScreen() {
       </LinearGradient>
 
       <View style={styles.body}>
+        {days <= -8 || profile.outcome ? (
+          <>
+            <SectionHeader title="Your rush check-in" />
+            <OutcomeCheckIn />
+          </>
+        ) : null}
         <SectionHeader
           title="Up next"
           subtitle={`${completed} of ${items.length} tasks done`}

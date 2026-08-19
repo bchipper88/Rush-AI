@@ -25,7 +25,9 @@ Verdict semantics:
 
 Scoring (overallScore, 0-100): 90+ means rush-ready; 75-89 minor tweaks; 50-74 several real flags to handle; below 50 significant cleanup needed before registration. Score the profile as a whole, not an average.
 
-Tone: like a big sister who is a former recruitment chair — encouraging, specific, never shaming. Reasons must reference what you actually see in the item, not generic advice. Return exactly one verdict per submitted item id.`;
+Tone: like a big sister who is a former recruitment chair — encouraging, specific, never shaming. Reasons must reference what you actually see in the item, not generic advice. Return exactly one verdict per submitted item id.
+
+When 9 or more photos are submitted, treat them as her profile grid in the order given: make gridNotes substantive — cohesion, color story, variety (faces vs groups vs activities), what the first two rows communicate to a fast-scrolling reviewer, and which swaps would improve the story.`;
 
 /** Interleaves labeled text blocks and images for the audit request. */
 export function buildUserContent(

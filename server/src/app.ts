@@ -1,8 +1,12 @@
+import { appendFile, mkdir } from 'node:fs/promises';
+import { dirname } from 'node:path';
+
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 
 import { AuditRequestSchema } from '../../shared/audit.ts';
 import { CoachChatRequestSchema } from '../../shared/coach.ts';
+import { EventsBatchSchema } from '../../shared/events.ts';
 import { ClaudeAuditError, getModel, runClaudeAudit } from './claude.ts';
 import { runCoachChat } from './coach.ts';
 
@@ -67,4 +71,33 @@ app.post('/api/coach', async (c) => {
     console.error('coach failed:', err);
     return c.json({ error: message }, 502);
   }
+});
+
+/** Anonymous usage/outcome events, appended as NDJSON (easy to load anywhere later). */
+app.post('/api/events', async (c) => {
+  let body: unknown;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: 'Request body must be JSON.' }, 400);
+  }
+
+  const parsed = EventsBatchSchema.safeParse(body);
+  if (!parsed.success) {
+    return c.json({ error: 'Invalid events batch.' }, 400);
+  }
+
+  const file = process.env.EVENTS_FILE ?? 'data/events.ndjson';
+  try {
+    await mkdir(dirname(file), { recursive: true });
+    const receivedAt = new Date().toISOString();
+    const lines = parsed.data.events
+      .map((e) => JSON.stringify({ ...e, receivedAt }))
+      .join('\n');
+    await appendFile(file, lines + '\n', 'utf8');
+  } catch (err) {
+    console.error('events write failed:', err);
+    return c.json({ error: 'Could not store events.' }, 500);
+  }
+  return c.json({ ok: true, stored: parsed.data.events.length });
 });

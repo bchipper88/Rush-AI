@@ -23,6 +23,7 @@ import {
   sendCoachMessage,
 } from '@/features/coach/coachClient';
 import { mockCoachReply } from '@/features/coach/mockCoach';
+import { track } from '@/lib/analytics';
 import { makeId } from '@/lib/id';
 import { ChatBubble, useCoachStore } from '@/state/coachStore';
 import { useChecklistStore } from '@/state/checklistStore';
@@ -89,6 +90,7 @@ export default function CoachChatScreen() {
           suggestions,
           source,
         });
+        track('coach_message', { source });
         setWaiting(false);
       };
 

@@ -11,8 +11,13 @@ describe('AuditRequestSchema', () => {
     expect(AuditRequestSchema.safeParse({ items: [] }).success).toBe(false);
   });
 
-  it('rejects more than 10 items', () => {
-    const items = Array.from({ length: 11 }, (_, i) => ({ ...validItem, id: `p${i}` }));
+  it('accepts a full 12-photo grid plus bio and caption', () => {
+    const items = Array.from({ length: 14 }, (_, i) => ({ ...validItem, id: `p${i}` }));
+    expect(AuditRequestSchema.safeParse({ items }).success).toBe(true);
+  });
+
+  it('rejects more than 14 items', () => {
+    const items = Array.from({ length: 15 }, (_, i) => ({ ...validItem, id: `p${i}` }));
     expect(AuditRequestSchema.safeParse({ items }).success).toBe(false);
   });
 

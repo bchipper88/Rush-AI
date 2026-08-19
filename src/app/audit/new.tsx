@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
@@ -18,22 +18,45 @@ import {
 } from '@/features/audit/auditClient';
 import { mockAudit } from '@/features/audit/mockAudit';
 import { PreparedPhoto, preparePhoto } from '@/features/audit/prepareImages';
+import { useShareStore } from '@/features/audit/shareIntent';
 import { resolveSchool } from '@/features/checklist/buildChecklist';
+import { track } from '@/lib/analytics';
 import { makeId } from '@/lib/id';
 import { useAuditStore } from '@/state/auditStore';
 import { useProfileStore } from '@/state/profileStore';
 import { colors, radii, spacing } from '@/theme';
 import type { AuditRequest } from '../../../shared/audit';
 
-const MAX_PHOTOS = 6;
+const MAX_PHOTOS = 12;
+const GRID_THRESHOLD = 9;
 
 export default function NewAuditScreen() {
   const [photos, setPhotos] = useState<PreparedPhoto[]>([]);
-  const [caption, setCaption] = useState('');
+  const [caption, setCaption] = useState(() => useShareStore.getState().pending?.text ?? '');
   const [bio, setBio] = useState('');
   const [analyzing, setAnalyzing] = useState(false);
   const addResult = useAuditStore((s) => s.addResult);
   const profile = useProfileStore((s) => s.profile);
+  const consumePending = useShareStore((s) => s.consumePending);
+  // Content handed off from the OS share sheet (Instagram/TikTok → Rush AI):
+  // consumed once, before first render, so text can seed initial state
+  const [shared] = useState(() => consumePending());
+
+  useEffect(() => {
+    if (!shared || shared.files.length === 0) return;
+    Promise.all(
+      shared.files.slice(0, MAX_PHOTOS).map((f) => preparePhoto(f, makeId('photo'))),
+    )
+      .then((prepared) =>
+        setPhotos((prev) => [...prev, ...prepared].slice(0, MAX_PHOTOS)),
+      )
+      .catch(() => {
+        Alert.alert(
+          'Import failed',
+          'Could not read the shared photos — try picking them from your library instead.',
+        );
+      });
+  }, [shared]);
 
   const pickPhotos = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -86,6 +109,13 @@ export default function NewAuditScreen() {
       })),
     };
     addResult(result);
+    track('audit_completed', {
+      source: response.source,
+      score: Math.round(response.overallScore),
+      itemCount: request.items.length,
+      photoCount: photos.length,
+      gridMode: photos.length >= GRID_THRESHOLD,
+    });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     router.replace(`/audit/${result.id}`);
   };
@@ -143,7 +173,17 @@ export default function NewAuditScreen() {
         {isMockMode() ? 'Demo mode: results are realistic samples.' : 'Analyzed privately by Claude.'}
       </AppText>
 
-      <SectionHeader title="Photos" subtitle="Grid posts, tagged photos, anything you're unsure about" />
+      <SectionHeader
+        title="Photos"
+        subtitle={`Grid posts, tagged photos, anything you're unsure about — add ${GRID_THRESHOLD}+ for full grid feedback`}
+      />
+      {photos.length >= GRID_THRESHOLD ? (
+        <View style={styles.gridBadge}>
+          <AppText variant="caption" weight="bold" color={colors.white}>
+            ✨ GRID MODE — you&apos;ll get cohesion & ordering feedback
+          </AppText>
+        </View>
+      ) : null}
       <View style={styles.grid}>
         {photos.map((p) => (
           <Pressable
@@ -197,6 +237,14 @@ export default function NewAuditScreen() {
 
 const styles = StyleSheet.create({
   back: { alignSelf: 'flex-start', minHeight: 0, paddingVertical: spacing.sm, paddingHorizontal: 0 },
+  gridBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.info,
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    marginBottom: spacing.sm,
+  },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   thumbWrap: { position: 'relative' },
   thumb: {

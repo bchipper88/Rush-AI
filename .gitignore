@@ -45,3 +45,5 @@ example
 # local env files (Rush AI)
 .env
 server/.env
+server/.test-tmp/
+server/data/

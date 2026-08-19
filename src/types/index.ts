@@ -56,6 +56,13 @@ export interface UserProfile {
   activities?: string;
   onboardingComplete: boolean;
   createdAt: string;
+  outcome?: RushOutcome;
+}
+
+export interface RushOutcome {
+  status: 'bid' | 'no_bid' | 'withdrew' | 'still_rushing';
+  chapter?: string;
+  recordedAt: string;
 }
 
 export type Phase =

@@ -1,9 +1,14 @@
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
-import type { ImagePickerAsset } from 'expo-image-picker';
 
 import type { AuditItemInput } from '../../../shared/audit';
 
 const MAX_DIMENSION = 1024;
+
+export interface PhotoSource {
+  uri: string;
+  width?: number;
+  height?: number;
+}
 
 export interface PreparedPhoto {
   item: AuditItemInput;
@@ -11,22 +16,23 @@ export interface PreparedPhoto {
 }
 
 /**
- * Resize a picked photo to ≤1024px on its longest edge and return a base64
- * JPEG audit item plus a local uri for thumbnails. Keeps request payloads
- * small enough for the proxy while preserving enough detail for review.
+ * Resize a photo (picker asset or shared file) to ≤1024px on its longest edge
+ * and return a base64 JPEG audit item plus a local uri for thumbnails. When
+ * dimensions are unknown (share-sheet files), resize defensively.
  */
 export async function preparePhoto(
-  asset: ImagePickerAsset,
+  source: PhotoSource,
   id: string,
 ): Promise<PreparedPhoto> {
-  const landscape = (asset.width || MAX_DIMENSION) >= (asset.height || MAX_DIMENSION);
-  const resize = landscape ? { width: MAX_DIMENSION } : { height: MAX_DIMENSION };
+  const width = source.width ?? 0;
+  const height = source.height ?? 0;
+  const dimsKnown = width > 0 && height > 0;
+  const landscape = !dimsKnown || width >= height;
+  const needsResize = !dimsKnown || width > MAX_DIMENSION || height > MAX_DIMENSION;
 
-  const context = ImageManipulator.manipulate(asset.uri);
-  const needsResize =
-    (asset.width ?? 0) > MAX_DIMENSION || (asset.height ?? 0) > MAX_DIMENSION;
+  const context = ImageManipulator.manipulate(source.uri);
   if (needsResize) {
-    context.resize(resize);
+    context.resize(landscape ? { width: MAX_DIMENSION } : { height: MAX_DIMENSION });
   }
   const rendered = await context.renderAsync();
   const result = await rendered.saveAsync({

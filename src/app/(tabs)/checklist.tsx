@@ -10,6 +10,7 @@ import { ProgressRing } from '@/components/ProgressRing';
 import { Screen } from '@/components/Screen';
 import { buildChecklist, resolveSchool } from '@/features/checklist/buildChecklist';
 import { phaseMeta, phaseOrder } from '@/features/checklist/phases';
+import { track } from '@/lib/analytics';
 import { useChecklistStore } from '@/state/checklistStore';
 import { useProfileStore } from '@/state/profileStore';
 import { colors, radii, spacing } from '@/theme';
@@ -45,6 +46,7 @@ export default function ChecklistScreen() {
   const handleToggle = (item: GeneratedChecklistItem) => {
     const nowDone = !done[item.id];
     toggle(item.id);
+    track('checklist_toggled', { itemId: item.id, phase: item.phase, done: nowDone });
     if (!nowDone) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     // fire confetti when this completes its phase

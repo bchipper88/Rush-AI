@@ -17,16 +17,26 @@ Claude.
   Five B's, elevator pitches, MRABA/bid-matching strategy (why maximizing
   options wins), rec letters by region, outfit guides with budget tiers, cost
   breakdowns, drop resilience, COB fallbacks — plus a searchable glossary.
-- **AI Social Media Audit** — pick photos and paste your bio/captions; Claude
-  reviews them the way a chapter's recruitment committee would and returns
-  keep / edit / archive / delete verdicts with reasons, an overall readiness
-  score, and cleanup actions.
+- **AI Social Media Audit** — pick up to 12 photos and paste your bio/captions;
+  Claude reviews them the way a chapter's recruitment committee would and
+  returns keep / edit / archive / delete verdicts with reasons, an overall
+  readiness score, and cleanup actions. 9+ photos triggers **grid mode** with
+  cohesion/ordering feedback. In a dev build (`npx expo run:ios`) you can also
+  **share posts straight from Instagram/TikTok** into an audit via the iOS
+  share sheet (share extensions don't run inside Expo Go).
 - **Coach chat** — an AI big-sister coach who knows your profile and checklist:
   ask "what should I work on next?" and she answers from your actual undone
   tasks and due dates. Guardrailed (no bid guarantees, no tier gossip). In demo
   mode a rule-based coach answers from your real checklist.
 
-Everything is stored locally on-device. No accounts.
+- **Bid Day check-in** — after recruitment ends, the app asks how it went
+  (bid / no bid / withdrew) so outcomes can inform future guidance.
+
+Profile data is stored locally on-device; no accounts. With user consent
+(on by default, toggle in Profile → Data & privacy), anonymous usage events
+(e.g. "audit completed", school/season from onboarding, rush outcome — never
+names, photos, or messages) are sent to your server's `POST /api/events` and
+appended to `server/data/events.ndjson` for product analytics.
 
 ## Run it (Mac)
 

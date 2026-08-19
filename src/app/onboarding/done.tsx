@@ -6,6 +6,7 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 
 import { AppText } from '@/components/AppText';
 import { useOnboardingDraft } from '@/features/onboarding/useOnboardingDraft';
+import { track } from '@/lib/analytics';
 import { useProfileStore } from '@/state/profileStore';
 import { colors, spacing } from '@/theme';
 
@@ -29,6 +30,14 @@ export default function DoneStep() {
         onboardingComplete: true,
         createdAt: new Date().toISOString(),
       });
+      track('onboarding_completed', {
+        schoolId: draft.schoolId,
+        rushYear: draft.rushYear,
+        season: draft.rushSeason,
+        hasTargetDate: !!draft.targetDate,
+        priorities: draft.priorities.join(','),
+        hasGpa: !!draft.gpa.trim(),
+      });
       draft.resetDraft();
       router.replace('/(tabs)');
     }, 2200);
@@ -51,6 +60,9 @@ export default function DoneStep() {
         </AppText>
         <AppText variant="body" color={colors.primaryDark} center style={styles.sub}>
           Personalizing your checklist, timeline, and coach tips
+        </AppText>
+        <AppText variant="caption" color={colors.primaryDark} center style={styles.sub}>
+          Anonymous usage stats help us improve Rush AI — manage this anytime in Profile.
         </AppText>
       </Animated.View>
     </LinearGradient>

@@ -21,7 +21,7 @@ export const AuditItemInputSchema = z.object({
 });
 
 export const AuditRequestSchema = z.object({
-  items: z.array(AuditItemInputSchema).min(1).max(10),
+  items: z.array(AuditItemInputSchema).min(1).max(14),
   context: z
     .object({
       schoolName: z.string().optional(),
