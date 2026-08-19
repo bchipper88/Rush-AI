@@ -22,6 +22,8 @@ export default function DoneStep() {
         customSchoolDomain: draft.customSchoolDomain.trim() || undefined,
         priorities: draft.priorities,
         rushYear: draft.rushYear,
+        rushSeason: draft.rushSeason ?? undefined,
+        targetDate: draft.targetDate ?? undefined,
         gpa: draft.gpa.trim() || undefined,
         activities: draft.activities.trim() || undefined,
         onboardingComplete: true,

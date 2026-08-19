@@ -7,9 +7,14 @@ import { AppText } from '@/components/AppText';
 import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
 import { SectionHeader } from '@/components/SectionHeader';
-import { buildChecklist, resolveSchool } from '@/features/checklist/buildChecklist';
+import {
+  buildChecklist,
+  resolveRushAnchor,
+  resolveSchool,
+  schoolSeason,
+} from '@/features/checklist/buildChecklist';
 import { phaseMeta } from '@/features/checklist/phases';
-import { daysUntil, formatMonthYear, rushAnchorDate } from '@/lib/dates';
+import { daysUntil, formatFullDate, formatMonthYear } from '@/lib/dates';
 import { useChecklistStore } from '@/state/checklistStore';
 import { useProfileStore } from '@/state/profileStore';
 import { colors, radii, spacing } from '@/theme';
@@ -29,7 +34,8 @@ export default function HomeScreen() {
 
   if (!profile || !school) return null;
 
-  const anchor = rushAnchorDate(profile.rushYear, school.rushMonth);
+  const anchor = resolveRushAnchor(profile, school);
+  const season = profile.rushSeason ?? schoolSeason(school);
   const days = daysUntil(anchor);
   const nextTasks = items.filter((i) => !done[i.id]).slice(0, 3);
   const completed = items.filter((i) => done[i.id]).length;
@@ -48,14 +54,16 @@ export default function HomeScreen() {
         end={{ x: 1, y: 1 }}
         style={styles.hero}>
         <AppText variant="small" weight="semibold" color={colors.blush}>
-          {schoolLabel} · {school.style === 'deferred_spring' ? 'Spring' : 'Fall'} rush
+          {schoolLabel} · {season === 'spring' ? 'Spring' : 'Fall'} rush
         </AppText>
         <AppText variant="hero" color={colors.white}>
           {days > 0 ? `${days} days` : 'Rush is here!'}
         </AppText>
         <AppText variant="small" color={colors.blush}>
           {days > 0
-            ? `until recruitment · ${formatMonthYear(anchor)}`
+            ? `until recruitment · ${
+                profile.targetDate ? formatFullDate(anchor) : formatMonthYear(anchor)
+              }`
             : 'You are ready. Deep breath — go be yourself.'}
         </AppText>
       </LinearGradient>

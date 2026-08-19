@@ -39,7 +39,8 @@
         {
           "photosPermission": "Rush AI uses your photos so you can audit them for recruitment readiness."
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,

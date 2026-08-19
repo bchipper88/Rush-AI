@@ -8,7 +8,12 @@ import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
 import { SectionHeader } from '@/components/SectionHeader';
 import { checkHealth, isMockMode } from '@/features/audit/auditClient';
-import { resolveSchool } from '@/features/checklist/buildChecklist';
+import {
+  resolveRushAnchor,
+  resolveSchool,
+  schoolSeason,
+} from '@/features/checklist/buildChecklist';
+import { formatFullDate } from '@/lib/dates';
 import { useAuditStore } from '@/state/auditStore';
 import { useChecklistStore } from '@/state/checklistStore';
 import { useProfileStore } from '@/state/profileStore';
@@ -89,7 +94,13 @@ export default function ProfileScreen() {
           </AppText>
           <AppText weight="semibold">{schoolLabel}</AppText>
           <AppText variant="small" color={colors.muted}>
-            {school.style === 'deferred_spring' ? 'Spring (deferred) rush' : 'Fall rush'} ·{' '}
+            {(profile.rushSeason ?? schoolSeason(school)) === 'spring'
+              ? 'Spring rush'
+              : 'Fall rush'}{' '}
+            {profile.targetDate
+              ? `· starts ${formatFullDate(resolveRushAnchor(profile, school))}`
+              : `· ${profile.rushYear}`}{' '}
+            ·{' '}
             {school.recs === 'not_used'
               ? 'no rec letters needed'
               : school.recs === 'required'

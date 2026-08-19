@@ -48,6 +48,10 @@ export interface UserProfile {
   priorities: Priority[];
   /** calendar year of the recruitment the user is preparing for, e.g. 2027 */
   rushYear: number;
+  /** user-chosen season; absent = use the school's usual schedule */
+  rushSeason?: 'fall' | 'spring';
+  /** exact recruitment start date (ISO yyyy-mm-dd) when the user knows it */
+  targetDate?: string;
   gpa?: string;
   activities?: string;
   onboardingComplete: boolean;

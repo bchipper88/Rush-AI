@@ -9,6 +9,8 @@ interface OnboardingDraft {
   customSchoolDomain: string;
   priorities: Priority[];
   rushYear: number;
+  rushSeason: 'fall' | 'spring' | null;
+  targetDate: string | null;
   gpa: string;
   activities: string;
   setName: (name: string) => void;
@@ -19,6 +21,8 @@ interface OnboardingDraft {
   ) => void;
   togglePriority: (p: Priority) => void;
   setRushYear: (year: number) => void;
+  setRushSeason: (season: 'fall' | 'spring') => void;
+  setTargetDate: (date: string | null) => void;
   setAcademics: (gpa: string, activities: string) => void;
   resetDraft: () => void;
 }
@@ -34,6 +38,8 @@ export const useOnboardingDraft = create<OnboardingDraft>((set) => ({
   customSchoolDomain: '',
   priorities: [],
   rushYear: defaultYear,
+  rushSeason: null,
+  targetDate: null,
   gpa: '',
   activities: '',
   setName: (name) => set({ name }),
@@ -45,7 +51,9 @@ export const useOnboardingDraft = create<OnboardingDraft>((set) => ({
         ? s.priorities.filter((x) => x !== p)
         : [...s.priorities, p],
     })),
-  setRushYear: (rushYear) => set({ rushYear }),
+  setRushYear: (rushYear) => set({ rushYear, targetDate: null }),
+  setRushSeason: (rushSeason) => set({ rushSeason, targetDate: null }),
+  setTargetDate: (targetDate) => set({ targetDate }),
   setAcademics: (gpa, activities) => set({ gpa, activities }),
   resetDraft: () =>
     set({
@@ -55,6 +63,8 @@ export const useOnboardingDraft = create<OnboardingDraft>((set) => ({
       customSchoolDomain: '',
       priorities: [],
       rushYear: defaultYear,
+      rushSeason: null,
+      targetDate: null,
       gpa: '',
       activities: '',
     }),

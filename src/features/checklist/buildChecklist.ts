@@ -14,6 +14,31 @@ export function resolveSchool(profile: Pick<UserProfile, 'schoolId'>): School {
   return getSchoolById(profile.schoolId) ?? defaultSchool;
 }
 
+export type RushSeason = 'fall' | 'spring';
+
+export function schoolSeason(school: School): RushSeason {
+  return school.style === 'deferred_spring' ? 'spring' : 'fall';
+}
+
+/**
+ * The date recruitment is anchored to, in priority order:
+ * 1. the user's exact target date, 2. her chosen season (school's usual
+ * month when they agree, else Aug/Jan), 3. the school's usual schedule.
+ */
+export function resolveRushAnchor(
+  profile: Pick<UserProfile, 'rushYear' | 'rushSeason' | 'targetDate'>,
+  school: School,
+): Date {
+  if (profile.targetDate) {
+    const [y, m, d] = profile.targetDate.split('-').map(Number);
+    return new Date(y, m - 1, d || 1);
+  }
+  const usual = schoolSeason(school);
+  const season = profile.rushSeason ?? usual;
+  const month = season === usual ? school.rushMonth : season === 'fall' ? 8 : 1;
+  return rushAnchorDate(profile.rushYear, month);
+}
+
 function matches(item: ChecklistTemplateItem, profile: UserProfile, school: School): boolean {
   const cond = item.appliesIf;
   if (!cond) return true;
@@ -35,7 +60,7 @@ export function buildChecklist(
   profile: UserProfile,
   school: School = resolveSchool(profile),
 ): GeneratedChecklistItem[] {
-  const anchor = rushAnchorDate(profile.rushYear, school.rushMonth);
+  const anchor = resolveRushAnchor(profile, school);
 
   return checklistTemplates
     .filter((item) => matches(item, profile, school))

@@ -1,7 +1,7 @@
 import { getSchoolById } from '@/content/schools';
 import type { UserProfile } from '@/types';
 
-import { buildChecklist, resolveSchool } from './buildChecklist';
+import { buildChecklist, resolveRushAnchor, resolveSchool } from './buildChecklist';
 
 function makeProfile(overrides: Partial<UserProfile> = {}): UserProfile {
   return {
@@ -73,6 +73,28 @@ describe('buildChecklist', () => {
     // default school: fall rush + recs recommended → rec items included
     expect(items.some((i) => i.phase === 'recs')).toBe(true);
     expect(items.find((i) => i.id === 'pack-rush-bag')?.dueLabel).toBe('By August 2027');
+  });
+
+  it('lets a season override move an SMU (spring) plan to fall', () => {
+    const profile = makeProfile({ schoolId: 'smu', rushSeason: 'fall' });
+    const items = buildChecklist(profile, getSchoolById('smu'));
+    expect(items.find((i) => i.id === 'pack-rush-bag')?.dueLabel).toBe('By August 2027');
+    // SMU still requires recs regardless of season
+    expect(items.some((i) => i.phase === 'recs')).toBe(true);
+  });
+
+  it('anchors everything to an exact target date when set', () => {
+    const profile = makeProfile({ schoolId: 'alabama', targetDate: '2027-08-07' });
+    const school = getSchoolById('alabama')!;
+    expect(resolveRushAnchor(profile, school).getDate()).toBe(7);
+    const items = buildChecklist(profile, school);
+    expect(items.find((i) => i.id === 'audit-instagram')?.dueLabel).toBe('By June 2027');
+  });
+
+  it('keeps the school usual month when the chosen season matches it', () => {
+    // UCLA rushes in September; choosing "fall" should keep September, not force August
+    const profile = makeProfile({ schoolId: 'ucla', rushSeason: 'fall' });
+    expect(resolveRushAnchor(profile, getSchoolById('ucla')!).getMonth()).toBe(8);
   });
 
   it('uses the school registration offset for the registration item', () => {
