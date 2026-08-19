@@ -1,10 +1,12 @@
 import * as Haptics from 'expo-haptics';
-import { useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
 import { Card } from '@/components/Card';
 import { Checkbox } from '@/components/Checkbox';
+import { ConfettiBurst } from '@/components/ConfettiBurst';
+import { ProgressRing } from '@/components/ProgressRing';
 import { Screen } from '@/components/Screen';
 import { buildChecklist, resolveSchool } from '@/features/checklist/buildChecklist';
 import { phaseMeta, phaseOrder } from '@/features/checklist/phases';
@@ -17,6 +19,8 @@ export default function ChecklistScreen() {
   const profile = useProfileStore((s) => s.profile);
   const done = useChecklistStore((s) => s.done);
   const toggle = useChecklistStore((s) => s.toggle);
+  const [celebrating, setCelebrating] = useState(0);
+  const celebrationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const items = useMemo(
     () => (profile ? buildChecklist(profile, resolveSchool(profile)) : []),
@@ -36,81 +40,108 @@ export default function ChecklistScreen() {
   if (!profile) return null;
 
   const completed = items.filter((i) => done[i.id]).length;
-  const pct = items.length === 0 ? 0 : Math.round((completed / items.length) * 100);
+  const progress = items.length === 0 ? 0 : completed / items.length;
 
-  const handleToggle = (id: string) => {
-    if (!done[id]) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  const handleToggle = (item: GeneratedChecklistItem) => {
+    const nowDone = !done[item.id];
+    toggle(item.id);
+    if (!nowDone) return;
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    // fire confetti when this completes its phase
+    const phaseItems = items.filter((i) => i.phase === item.phase);
+    const phaseComplete = phaseItems.every((i) => (i.id === item.id ? true : done[i.id]));
+    if (phaseComplete) {
+      setCelebrating((n) => n + 1);
+      if (celebrationTimer.current) clearTimeout(celebrationTimer.current);
+      celebrationTimer.current = setTimeout(() => setCelebrating(0), 1600);
     }
-    toggle(id);
   };
 
   return (
-    <Screen safeTop>
-      <AppText variant="title">Your game plan</AppText>
-      <View style={styles.progressTrack}>
-        <View style={[styles.progressFill, { width: `${pct}%` }]} />
-      </View>
-      <AppText variant="small" color={colors.muted}>
-        {completed} of {items.length} done · personalized for your school & timeline
-      </AppText>
-
-      {grouped.map(({ phase, items: phaseItems }) => (
-        <View key={phase}>
-          <AppText variant="heading" style={styles.phaseTitle}>
-            {phaseMeta[phase].emoji} {phaseMeta[phase].label}
-          </AppText>
-          <View style={styles.cards}>
-            {phaseItems.map((item) => {
-              const checked = !!done[item.id];
-              return (
-                <Card key={item.id} style={checked ? styles.doneCard : undefined}>
-                  <View style={styles.row}>
-                    <Checkbox checked={checked} onToggle={() => handleToggle(item.id)} />
-                    <View style={styles.rowText}>
-                      <AppText
-                        weight="semibold"
-                        color={checked ? colors.muted : colors.ink}
-                        style={checked ? styles.struck : undefined}>
-                        {item.title}
-                      </AppText>
-                      <AppText variant="caption" weight="semibold" color={colors.primary}>
-                        {item.dueLabel}
-                      </AppText>
-                      {!checked ? (
-                        <AppText variant="small" color={colors.muted}>
-                          {item.detail}
-                        </AppText>
-                      ) : null}
-                    </View>
-                  </View>
-                </Card>
-              );
-            })}
-          </View>
+    <View style={styles.root}>
+      <Screen safeTop>
+        <AppText variant="title">Your game plan</AppText>
+        <View style={styles.ringWrap}>
+          <ProgressRing progress={progress} label={`${completed} OF ${items.length}`} />
         </View>
-      ))}
-    </Screen>
+
+        {grouped.map(({ phase, items: phaseItems }) => {
+          const phaseDone = phaseItems.filter((i) => done[i.id]).length;
+          return (
+            <View key={phase}>
+              <View style={styles.phaseHeader}>
+                <AppText variant="heading">
+                  {phaseMeta[phase].emoji} {phaseMeta[phase].label}
+                </AppText>
+                <View
+                  style={[
+                    styles.hudChip,
+                    phaseDone === phaseItems.length && styles.hudChipDone,
+                  ]}>
+                  <AppText
+                    variant="caption"
+                    weight="bold"
+                    color={phaseDone === phaseItems.length ? colors.white : colors.muted}>
+                    {phaseDone}/{phaseItems.length}
+                  </AppText>
+                </View>
+              </View>
+              <View style={styles.cards}>
+                {phaseItems.map((item) => {
+                  const checked = !!done[item.id];
+                  return (
+                    <Card key={item.id} style={checked ? styles.doneCard : undefined}>
+                      <View style={styles.row}>
+                        <Checkbox checked={checked} onToggle={() => handleToggle(item)} />
+                        <View style={styles.rowText}>
+                          <AppText
+                            weight="semibold"
+                            color={checked ? colors.muted : colors.ink}
+                            style={checked ? styles.struck : undefined}>
+                            {item.title}
+                          </AppText>
+                          <AppText variant="caption" weight="semibold" color={colors.primary}>
+                            {item.dueLabel}
+                          </AppText>
+                          {!checked ? (
+                            <AppText variant="small" color={colors.muted}>
+                              {item.detail}
+                            </AppText>
+                          ) : null}
+                        </View>
+                      </View>
+                    </Card>
+                  );
+                })}
+              </View>
+            </View>
+          );
+        })}
+      </Screen>
+      {celebrating > 0 ? <ConfettiBurst key={celebrating} /> : null}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  progressTrack: {
-    height: 10,
-    borderRadius: radii.pill,
+  root: { flex: 1 },
+  ringWrap: { marginTop: spacing.lg, marginBottom: spacing.sm },
+  phaseHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: spacing.xl,
+    marginBottom: spacing.md,
+  },
+  hudChip: {
     backgroundColor: colors.blush,
     borderWidth: 1,
     borderColor: colors.border,
-    marginTop: spacing.lg,
-    marginBottom: spacing.sm,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: colors.primary,
     borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 3,
   },
-  phaseTitle: { marginTop: spacing.xl, marginBottom: spacing.md },
+  hudChipDone: { backgroundColor: colors.success, borderColor: colors.success },
   cards: { gap: spacing.sm },
   row: { flexDirection: 'row', gap: spacing.md, alignItems: 'flex-start' },
   rowText: { flex: 1, gap: 2 },

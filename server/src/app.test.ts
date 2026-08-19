@@ -116,4 +116,56 @@ describe('server app', () => {
     });
     expect(res.status).toBe(502);
   });
+
+  describe('POST /api/coach', () => {
+    const coachRequest = {
+      messages: [{ role: 'user', text: 'What should I work on next?' }],
+      context: {
+        name: 'Emma',
+        schoolName: 'University of Alabama',
+        region: 'south',
+        season: 'fall',
+        rushYear: 2027,
+        daysUntilRush: 90,
+        priorities: ['sisterhood'],
+        checklist: [
+          { title: 'Register', phase: 'register', dueLabel: 'By May 2027', done: false },
+        ],
+      },
+    };
+
+    it('returns 400 on an invalid body', async () => {
+      const res = await app.request('/api/coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [] }),
+      });
+      expect(res.status).toBe(400);
+    });
+
+    it('maps a successful Claude reply through', async () => {
+      mockParse.mockResolvedValue({
+        stop_reason: 'end_turn',
+        parsed_output: { reply: 'Register first!', suggestions: ['Why?'] },
+      });
+      const res = await app.request('/api/coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(coachRequest),
+      });
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.reply).toBe('Register first!');
+    });
+
+    it('returns 502 on upstream failure', async () => {
+      mockParse.mockRejectedValue(new Error('boom'));
+      const res = await app.request('/api/coach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(coachRequest),
+      });
+      expect(res.status).toBe(502);
+    });
+  });
 });

@@ -21,6 +21,10 @@ Claude.
   reviews them the way a chapter's recruitment committee would and returns
   keep / edit / archive / delete verdicts with reasons, an overall readiness
   score, and cleanup actions.
+- **Coach chat** — an AI big-sister coach who knows your profile and checklist:
+  ask "what should I work on next?" and she answers from your actual undone
+  tasks and due dates. Guardrailed (no bid guarantees, no tier gossip). In demo
+  mode a rule-based coach answers from your real checklist.
 
 Everything is stored locally on-device. No accounts.
 
@@ -87,6 +91,7 @@ src/components/     Pink/white design system (DM Serif Display + Inter)
 src/content/        Seed data: schools, articles, glossary, checklist templates
 src/features/       Pure logic: checklist engine, audit client, filters
 src/state/          zustand + AsyncStorage stores (profile, checklist, audits)
-shared/audit.ts     Zod schemas shared by app and server
-server/             Hono proxy: POST /api/audit → Claude (structured outputs)
+shared/             Zod contracts shared by app and server (audit, coach chat)
+server/             Hono proxy: POST /api/audit, POST /api/coach → Claude
+                    (vision + structured outputs)
 ```

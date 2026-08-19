@@ -1,8 +1,10 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { ActionTile } from '@/components/ActionTile';
 import { AppText } from '@/components/AppText';
 import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
@@ -45,84 +47,127 @@ export default function HomeScreen() {
       : school.shortName;
 
   return (
-    <Screen safeTop>
-      <AppText variant="title">Hi {profile.name} 🎀</AppText>
-
+    <Screen padded={false}>
+      {/* Headspace-style Today Hero: tall aurora gradient with greeting inside */}
       <LinearGradient
-        colors={[colors.primary, colors.primaryDark]}
+        colors={[colors.blush, colors.primarySoft, colors.primary]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.hero}>
-        <AppText variant="small" weight="semibold" color={colors.blush}>
-          {schoolLabel} · {season === 'spring' ? 'Spring' : 'Fall'} rush
-        </AppText>
-        <AppText variant="hero" color={colors.white}>
-          {days > 0 ? `${days} days` : 'Rush is here!'}
-        </AppText>
-        <AppText variant="small" color={colors.blush}>
-          {days > 0
-            ? `until recruitment · ${
-                profile.targetDate ? formatFullDate(anchor) : formatMonthYear(anchor)
-              }`
-            : 'You are ready. Deep breath — go be yourself.'}
-        </AppText>
+        <Animated.View entering={FadeInDown.duration(500)} style={styles.heroInner}>
+          <AppText variant="hero" color={colors.primaryDark}>
+            Hi {profile.name} 🎀
+          </AppText>
+          <View style={styles.heroChip}>
+            <AppText variant="caption" weight="bold" color={colors.primaryDark}>
+              {schoolLabel.toUpperCase()} · {season === 'spring' ? 'SPRING' : 'FALL'} RUSH
+            </AppText>
+          </View>
+          <View style={styles.countdown}>
+            <AppText style={styles.countNumber} color={colors.white}>
+              {days > 0 ? `${days}` : '🎉'}
+            </AppText>
+            <AppText variant="subheading" weight="semibold" color={colors.white}>
+              {days > 0
+                ? `days until recruitment · ${
+                    profile.targetDate ? formatFullDate(anchor) : formatMonthYear(anchor)
+                  }`
+                : 'Rush is here — deep breath, go be yourself.'}
+            </AppText>
+          </View>
+        </Animated.View>
       </LinearGradient>
 
-      <SectionHeader
-        title="Up next"
-        subtitle={`${completed} of ${items.length} tasks done`}
-      />
-      {nextTasks.length === 0 ? (
-        <Card>
-          <AppText weight="semibold">All caught up! ✨</AppText>
-          <AppText variant="small" color={colors.muted}>
-            Every task is checked off. Browse the Coach tab or run a social audit.
-          </AppText>
-        </Card>
-      ) : (
-        <View style={styles.tasks}>
-          {nextTasks.map((item) => (
-            <Card key={item.id} onPress={() => router.push('/(tabs)/checklist')}>
-              <AppText variant="caption" weight="semibold" color={colors.primary}>
-                {phaseMeta[item.phase].emoji} {phaseMeta[item.phase].label} · {item.dueLabel}
-              </AppText>
-              <AppText weight="semibold">{item.title}</AppText>
-            </Card>
-          ))}
-        </View>
-      )}
+      <View style={styles.body}>
+        <SectionHeader
+          title="Up next"
+          subtitle={`${completed} of ${items.length} tasks done`}
+        />
+        {nextTasks.length === 0 ? (
+          <Card>
+            <AppText weight="semibold">All caught up! ✨</AppText>
+            <AppText variant="small" color={colors.muted}>
+              Every task is checked off. Ask your coach what else you can polish.
+            </AppText>
+          </Card>
+        ) : (
+          <View style={styles.tasks}>
+            {nextTasks.map((item) => (
+              <Card key={item.id} onPress={() => router.push('/(tabs)/checklist')}>
+                <AppText variant="caption" weight="semibold" color={colors.primary}>
+                  {phaseMeta[item.phase].emoji} {phaseMeta[item.phase].label} · {item.dueLabel}
+                </AppText>
+                <AppText weight="semibold">{item.title}</AppText>
+              </Card>
+            ))}
+          </View>
+        )}
 
-      <SectionHeader title="Your toolkit" />
-      <View style={styles.tasks}>
-        <Card onPress={() => router.push('/audit/new')}>
-          <AppText weight="semibold">📱 Run a social media audit</AppText>
-          <AppText variant="small" color={colors.muted}>
-            Chapters look at your profiles during pre-screening. See yours the way they will.
-          </AppText>
-        </Card>
-        <Card onPress={() => router.push('/(tabs)/coach')}>
-          <AppText weight="semibold">🎀 Coach tips</AppText>
-          <AppText variant="small" color={colors.muted}>
-            Rounds, conversations, the Five B&apos;s, and bid-matching strategy — all in one place.
-          </AppText>
-        </Card>
-        <Card onPress={() => router.push('/glossary')}>
-          <AppText weight="semibold">📖 Rush glossary</AppText>
-          <AppText variant="small" color={colors.muted}>
-            PNM? Rho Gamma? MRABA? Speak fluent rush before you arrive.
-          </AppText>
-        </Card>
+        <SectionHeader title="Your toolkit" />
       </View>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.tiles}>
+        <ActionTile
+          emoji="💬"
+          title="Ask your coach"
+          subtitle="What should I work on next?"
+          onPress={() => router.push('/coach/chat')}
+        />
+        <ActionTile
+          emoji="📱"
+          title="Social audit"
+          subtitle="See your feed like a chapter will"
+          onPress={() => router.push('/audit/new')}
+        />
+        <ActionTile
+          emoji="🎀"
+          title="Coach guides"
+          subtitle="Rounds, recs, outfits & more"
+          onPress={() => router.push('/(tabs)/coach')}
+        />
+        <ActionTile
+          emoji="📖"
+          title="Glossary"
+          subtitle="Speak fluent rush"
+          onPress={() => router.push('/glossary')}
+        />
+      </ScrollView>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   hero: {
-    borderRadius: radii.lg,
-    padding: spacing.xl,
-    marginTop: spacing.lg,
-    gap: spacing.xs,
+    minHeight: 260,
+    borderBottomLeftRadius: radii.xl,
+    borderBottomRightRadius: radii.xl,
+    justifyContent: 'flex-end',
   },
+  heroInner: {
+    padding: spacing.xl,
+    paddingTop: spacing.xxxl + spacing.xl,
+    gap: spacing.md,
+  },
+  heroChip: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    borderRadius: radii.pill,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  countdown: { gap: 0 },
+  countNumber: {
+    fontFamily: 'DMSerifDisplay_400Regular',
+    fontSize: 64,
+    lineHeight: 70,
+  },
+  body: { paddingHorizontal: spacing.xl },
   tasks: { gap: spacing.sm },
+  tiles: {
+    gap: spacing.md,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl,
+  },
 });
