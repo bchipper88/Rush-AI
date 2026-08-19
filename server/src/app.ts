@@ -7,8 +7,10 @@ import { bodyLimit } from 'hono/body-limit';
 import { AuditRequestSchema } from '../../shared/audit.ts';
 import { CoachChatRequestSchema } from '../../shared/coach.ts';
 import { EventsBatchSchema } from '../../shared/events.ts';
+import { PracticeRequestSchema } from '../../shared/practice.ts';
 import { ClaudeAuditError, getModel, runClaudeAudit } from './claude.ts';
 import { runCoachChat } from './coach.ts';
+import { runPractice } from './practice.ts';
 
 export const app = new Hono();
 
@@ -69,6 +71,32 @@ app.post('/api/coach', async (c) => {
         ? err.message
         : 'The coach is unavailable right now. Please retry.';
     console.error('coach failed:', err);
+    return c.json({ error: message }, 502);
+  }
+});
+
+app.post('/api/practice', async (c) => {
+  let body: unknown;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: 'Request body must be JSON.' }, 400);
+  }
+
+  const parsed = PracticeRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return c.json({ error: 'Invalid practice request.', issues: parsed.error.issues }, 400);
+  }
+
+  try {
+    const result = await runPractice(parsed.data);
+    return c.json(result);
+  } catch (err) {
+    const message =
+      err instanceof ClaudeAuditError
+        ? err.message
+        : 'Practice mode is unavailable right now. Please retry.';
+    console.error('practice failed:', err);
     return c.json({ error: message }, 502);
   }
 });

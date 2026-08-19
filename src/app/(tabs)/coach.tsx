@@ -75,7 +75,14 @@ export default function CoachScreen() {
         )}
       </Pressable>
 
-      <Card onPress={() => router.push('/glossary')} style={styles.glossaryCard}>
+      <Card onPress={() => router.push('/coach/practice')} style={styles.glossaryCard}>
+        <AppText weight="semibold">🎭 Practice a conversation</AppText>
+        <AppText variant="small" color={colors.muted}>
+          Rehearse a real round — your coach plays the chapter member and scores how you did.
+        </AppText>
+      </Card>
+
+      <Card onPress={() => router.push('/glossary')}>
         <AppText weight="semibold">📖 Rush glossary</AppText>
         <AppText variant="small" color={colors.muted}>
           Every term from PNM to quota addition, explained.

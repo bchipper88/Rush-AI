@@ -123,6 +123,12 @@ export default function HomeScreen() {
           onPress={() => router.push('/coach/chat')}
         />
         <ActionTile
+          emoji="🎭"
+          title="Practice talking"
+          subtitle="Rehearse a round, get scored"
+          onPress={() => router.push('/coach/practice')}
+        />
+        <ActionTile
           emoji="📱"
           title="Social audit"
           subtitle="See your feed like a chapter will"
