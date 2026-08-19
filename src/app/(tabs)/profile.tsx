@@ -8,16 +8,25 @@ import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
 import { SectionHeader } from '@/components/SectionHeader';
 import { checkHealth, isMockMode } from '@/features/audit/auditClient';
+import { Chip } from '@/components/Chip';
 import {
+  buildChecklist,
   resolveRushAnchor,
   resolveSchool,
   schoolSeason,
 } from '@/features/checklist/buildChecklist';
+import {
+  cancelAll,
+  notificationsAvailable,
+  requestNotificationPermission,
+  rescheduleAll,
+  useNotificationStore,
+} from '@/lib/notifications';
+import { useChecklistStore } from '@/state/checklistStore';
 import { formatFullDate } from '@/lib/dates';
 import { OutcomeCheckIn } from '@/components/OutcomeCheckIn';
 import { useAnalyticsStore } from '@/lib/analytics';
 import { useAuditStore } from '@/state/auditStore';
-import { useChecklistStore } from '@/state/checklistStore';
 import { useProfileStore } from '@/state/profileStore';
 import { colors, spacing } from '@/theme';
 
@@ -37,6 +46,11 @@ export default function ProfileScreen() {
   const resetChecklist = useChecklistStore((s) => s.resetChecklist);
   const clearAudits = useAuditStore((s) => s.clearHistory);
   const analyticsEnabled = useAnalyticsStore((s) => s.enabled);
+  const notifEnabled = useNotificationStore((s) => s.enabled);
+  const setNotifEnabled = useNotificationStore((s) => s.setEnabled);
+  const notifHour = useNotificationStore((s) => s.hour);
+  const setNotifHour = useNotificationStore((s) => s.setHour);
+  const checklistDone = useChecklistStore((s) => s.done);
   const setAnalyticsEnabled = useAnalyticsStore((s) => s.setEnabled);
   const [aiConnected, setAiConnected] = useState<boolean | null>(
     isMockMode() ? false : null,
@@ -58,6 +72,7 @@ export default function ProfileScreen() {
   if (!profile) return null;
 
   const school = resolveSchool(profile);
+  const nextTask = buildChecklist(profile, school).find((i) => !checklistDone[i.id]);
   const schoolLabel =
     profile.customSchoolName && profile.schoolId === 'custom'
       ? profile.customSchoolName
@@ -149,6 +164,65 @@ export default function ProfileScreen() {
         </AppText>
       </Card>
 
+      <SectionHeader title="Reminders" />
+      <Card>
+        <View style={styles.toggleRow}>
+          <View style={styles.toggleText}>
+            <AppText weight="semibold">Daily nudge & countdown alerts</AppText>
+            <AppText variant="small" color={colors.muted}>
+              {notificationsAvailable()
+                ? `A gentle reminder each day, plus alerts at 30, 7, and 1 day out.`
+                : 'Not available in this build.'}
+            </AppText>
+          </View>
+          <Switch
+            value={notifEnabled}
+            disabled={!notificationsAvailable()}
+            onValueChange={async (next) => {
+              if (next) {
+                const granted = await requestNotificationPermission();
+                if (!granted) {
+                  Alert.alert(
+                    'Notifications are off',
+                    'Turn them on for Rush AI in iOS Settings to get reminders.',
+                  );
+                  return;
+                }
+                setNotifEnabled(true);
+                await rescheduleAll({
+                  dailyHour: notifHour,
+                  rushAnchor: resolveRushAnchor(profile, school),
+                  nextTaskTitle: nextTask?.title,
+                });
+              } else {
+                setNotifEnabled(false);
+                await cancelAll();
+              }
+            }}
+            trackColor={{ true: colors.primary, false: colors.border }}
+          />
+        </View>
+        {notifEnabled ? (
+          <View style={styles.hours}>
+            {[7, 9, 12, 18, 20].map((h) => (
+              <Chip
+                key={h}
+                label={`${h % 12 === 0 ? 12 : h % 12}${h < 12 ? 'am' : 'pm'}`}
+                selected={notifHour === h}
+                onPress={async () => {
+                  setNotifHour(h);
+                  await rescheduleAll({
+                    dailyHour: h,
+                    rushAnchor: resolveRushAnchor(profile, school),
+                    nextTaskTitle: nextTask?.title,
+                  });
+                }}
+              />
+            ))}
+          </View>
+        ) : null}
+      </Card>
+
       <SectionHeader title="Data & privacy" />
       <Card>
         <View style={styles.toggleRow}>
@@ -179,4 +253,5 @@ const styles = StyleSheet.create({
   reset: { marginTop: spacing.sm },
   toggleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   toggleText: { flex: 1, gap: 2 },
+  hours: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
 });

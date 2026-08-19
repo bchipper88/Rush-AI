@@ -16,7 +16,9 @@ import {
   useShareIntentSafe,
   useShareStore,
 } from '@/features/audit/shareIntent';
+import { dayKey } from '@/features/streak/streakUtils';
 import { useProfileStore } from '@/state/profileStore';
+import { useStreakStore } from '@/state/streakStore';
 import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -37,6 +39,8 @@ export default function RootLayout() {
   useEffect(() => {
     if (fontsLoaded && hasHydrated) {
       SplashScreen.hideAsync();
+      // Advance the daily streak once the persisted value is available.
+      useStreakStore.getState().recordVisit(dayKey(new Date()));
     }
   }, [fontsLoaded, hasHydrated]);
 
