@@ -59,7 +59,7 @@ export default function SchoolStep() {
 
   return (
     <OnboardingStep
-      step={1}
+      step={2}
       title="Where are you rushing?"
       subtitle="Search any U.S. college — we'll tailor your plan to your campus."
       ctaDisabled={!schoolId || (schoolId === CUSTOM_SCHOOL_ID && customSchoolName.trim() === '')}

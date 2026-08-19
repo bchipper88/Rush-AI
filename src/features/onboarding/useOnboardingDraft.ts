@@ -4,6 +4,7 @@ import type { Priority } from '@/types';
 
 interface OnboardingDraft {
   name: string;
+  birthDate: string | null;
   schoolId: string | null;
   customSchoolName: string;
   customSchoolDomain: string;
@@ -14,6 +15,7 @@ interface OnboardingDraft {
   gpa: string;
   activities: string;
   setName: (name: string) => void;
+  setBirthDate: (date: string) => void;
   setSchool: (
     schoolId: string | null,
     customSchoolName?: string,
@@ -33,6 +35,7 @@ const defaultYear = new Date().getFullYear() + 1;
  *  persisted profile store only on the final step. */
 export const useOnboardingDraft = create<OnboardingDraft>((set) => ({
   name: '',
+  birthDate: null,
   schoolId: null,
   customSchoolName: '',
   customSchoolDomain: '',
@@ -43,6 +46,7 @@ export const useOnboardingDraft = create<OnboardingDraft>((set) => ({
   gpa: '',
   activities: '',
   setName: (name) => set({ name }),
+  setBirthDate: (birthDate) => set({ birthDate }),
   setSchool: (schoolId, customSchoolName = '', customSchoolDomain = '') =>
     set({ schoolId, customSchoolName, customSchoolDomain }),
   togglePriority: (p) =>
@@ -58,6 +62,7 @@ export const useOnboardingDraft = create<OnboardingDraft>((set) => ({
   resetDraft: () =>
     set({
       name: '',
+      birthDate: null,
       schoolId: null,
       customSchoolName: '',
       customSchoolDomain: '',

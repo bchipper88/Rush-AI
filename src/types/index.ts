@@ -42,6 +42,8 @@ export type Priority =
 
 export interface UserProfile {
   name: string;
+  /** ISO yyyy-mm-dd, stored on-device only; analytics sees a bracket */
+  birthDate?: string;
   schoolId: string | null;
   customSchoolName?: string;
   customSchoolDomain?: string;

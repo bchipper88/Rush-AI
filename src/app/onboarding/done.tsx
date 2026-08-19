@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 
 import { AppText } from '@/components/AppText';
+import { ageBracket, ageFromBirthDate } from '@/features/onboarding/age';
 import { useOnboardingDraft } from '@/features/onboarding/useOnboardingDraft';
 import { track } from '@/lib/analytics';
 import { useProfileStore } from '@/state/profileStore';
@@ -18,6 +19,7 @@ export default function DoneStep() {
     const timer = setTimeout(() => {
       setProfile({
         name: draft.name.trim(),
+        birthDate: draft.birthDate ?? undefined,
         schoolId: draft.schoolId,
         customSchoolName: draft.customSchoolName.trim() || undefined,
         customSchoolDomain: draft.customSchoolDomain.trim() || undefined,
@@ -30,7 +32,9 @@ export default function DoneStep() {
         onboardingComplete: true,
         createdAt: new Date().toISOString(),
       });
+      const age = draft.birthDate ? ageFromBirthDate(draft.birthDate) : null;
       track('onboarding_completed', {
+        ageBracket: age !== null ? ageBracket(age) : null,
         schoolId: draft.schoolId,
         rushYear: draft.rushYear,
         season: draft.rushSeason,

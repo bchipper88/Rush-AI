@@ -13,7 +13,7 @@ export default function AcademicsStep() {
 
   return (
     <OnboardingStep
-      step={4}
+      step={5}
       title="A little about you"
       subtitle="Optional — but chapters do screen grades, and activities fuel your social résumé."
       ctaLabel="Finish"

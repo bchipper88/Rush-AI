@@ -23,7 +23,7 @@ export default function PrioritiesStep() {
 
   return (
     <OnboardingStep
-      step={2}
+      step={3}
       title="What matters most to you?"
       subtitle="Pick as many as you like — we'll tune your plan and tips around them."
       ctaDisabled={priorities.length === 0}

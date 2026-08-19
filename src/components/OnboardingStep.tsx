@@ -8,7 +8,7 @@ import { ProgressDots } from '@/components/ProgressDots';
 import { Screen } from '@/components/Screen';
 import { colors, spacing } from '@/theme';
 
-export const ONBOARDING_STEPS = 5;
+export const ONBOARDING_STEPS = 6;
 
 interface OnboardingStepProps {
   step: number;

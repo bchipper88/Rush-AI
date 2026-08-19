@@ -46,7 +46,7 @@ export default function TimelineStep() {
 
   return (
     <OnboardingStep
-      step={3}
+      step={4}
       title="When are you rushing?"
       subtitle={
         scheduleKnown

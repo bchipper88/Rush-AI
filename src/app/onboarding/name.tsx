@@ -14,7 +14,7 @@ export default function NameStep() {
       title="Hey, future new member 🎀"
       subtitle="Let's build your personal rush game plan. First — what should we call you?"
       ctaDisabled={name.trim().length === 0}
-      onNext={() => router.push('/onboarding/school')}>
+      onNext={() => router.push('/onboarding/age')}>
       <SearchInput
         placeholder="Your first name"
         value={name}
