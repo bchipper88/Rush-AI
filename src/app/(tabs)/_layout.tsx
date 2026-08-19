@@ -1,4 +1,6 @@
+import { BlurView } from 'expo-blur';
 import { Tabs } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/AppText';
 import { colors, fonts } from '@/theme';
@@ -24,10 +26,17 @@ export default function TabsLayout() {
           letterSpacing: 0.2,
         },
         tabBarStyle: {
-          backgroundColor: colors.white,
+          position: 'absolute',
+          backgroundColor: 'transparent',
           borderTopColor: colors.border,
           borderTopWidth: 0.5,
         },
+        tabBarBackground: () => (
+          <BlurView intensity={60} tint="light" style={StyleSheet.absoluteFill}>
+            {/* warm wash so the blur reads as cream, not gray */}
+            <View style={styles.overlay} />
+          </BlurView>
+        ),
       }}>
       <Tabs.Screen
         name="index"
@@ -39,8 +48,15 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="checklist"
         options={{
-          title: 'Checklist',
+          title: 'Plan',
           tabBarIcon: ({ focused }) => <TabIcon emoji="✅" focused={focused} />,
+        }}
+      />
+      <Tabs.Screen
+        name="houses"
+        options={{
+          title: 'Houses',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="🏛️" focused={focused} />,
         }}
       />
       <Tabs.Screen
@@ -51,19 +67,19 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="audit"
-        options={{
-          title: 'Audit',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📱" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: 'Me',
           tabBarIcon: ({ focused }) => <TabIcon emoji="👤" focused={focused} />,
         }}
       />
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(255, 247, 250, 0.72)',
+  },
+});

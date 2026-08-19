@@ -47,7 +47,7 @@ export default function AuditResultScreen() {
       <Button
         label="← Back"
         variant="ghost"
-        onPress={() => router.replace('/(tabs)/audit')}
+        onPress={() => router.replace('/audit')}
         style={styles.back}
       />
       <AppText variant="title">Your audit results</AppText>
